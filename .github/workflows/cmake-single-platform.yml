@@ -37,3 +37,18 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
 
+    - name: Install coverage tooling
+      run: python3 -m pip install --upgrade pip gcovr
+
+    - name: Generate coverage report
+      run: cmake --build ${{github.workspace}}/build --target coverage
+
+    - name: Upload coverage artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: |
+          ${{github.workspace}}/build-coverage/coverage/index.html
+          ${{github.workspace}}/build-coverage/coverage/coverage.xml
+        if-no-files-found: error
+
